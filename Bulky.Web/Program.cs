@@ -1,4 +1,5 @@
 using BulkyBook.DataAccesss.Data;
+using BulkyBook.DataAccesss.DbInitializer;
 using BulkyBook.DataAccesss.Repository;
 using BulkyBook.DataAccesss.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,8 @@ namespace BulkyBook.Web
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            builder.Services.AddScoped<IDbInitializer, DbInitializer>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -25,6 +28,11 @@ namespace BulkyBook.Web
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+            }
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+                dbInitializer.Initialize();
             }
 
             app.UseHttpsRedirection();

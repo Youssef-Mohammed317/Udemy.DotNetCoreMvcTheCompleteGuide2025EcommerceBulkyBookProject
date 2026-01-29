@@ -10,12 +10,16 @@ namespace BulkyBook.DataAccesss.Repository
     {
         private readonly ApplicationDbContext _context;
         private readonly CategoryRepository _categoryRepository;
+        private readonly ProductRepository _productRepository;
+        private readonly ProductImageRepository _productImageRepository;
 
         public UnitOfWork(ApplicationDbContext context)
         {
             this._context = context;
         }
-        public CategoryRepository CategoryRepository => _categoryRepository ?? new CategoryRepository(_context);
+        public ICategoryRepository CategoryRepository => _categoryRepository ?? new CategoryRepository(_context);
+        public IProductRepository ProductRepository => _productRepository ?? new ProductRepository(_context);
+        public IProductImageRepository ProductImageRepository => _productImageRepository ?? new ProductImageRepository(_context);
 
 
 
