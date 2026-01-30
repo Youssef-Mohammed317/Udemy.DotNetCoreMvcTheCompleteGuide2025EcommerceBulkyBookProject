@@ -3,9 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using BulkyBook.Models.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 namespace BulkyBook.DataAccesss.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
