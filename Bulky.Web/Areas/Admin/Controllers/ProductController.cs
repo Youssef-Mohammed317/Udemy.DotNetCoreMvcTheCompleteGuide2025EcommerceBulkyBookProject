@@ -23,7 +23,7 @@ namespace BulkyBook.Web.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            var products = _unitOfWork.ProductRepository.GetAll(p => p.Include(p => p.Category)).ToList();
+            var products = _unitOfWork.ProductRepository.GetAll(include:p => p.Include(p => p.Category)).ToList();
 
             return View(products);
         }
@@ -144,7 +144,7 @@ namespace BulkyBook.Web.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            List<Product> objProductList = _unitOfWork.ProductRepository.GetAll(p => p.Include(p => p.Category)).ToList();
+            List<Product> objProductList = _unitOfWork.ProductRepository.GetAll(include:p => p.Include(p => p.Category)).ToList();
             return Json(new { data = objProductList });
         }
 

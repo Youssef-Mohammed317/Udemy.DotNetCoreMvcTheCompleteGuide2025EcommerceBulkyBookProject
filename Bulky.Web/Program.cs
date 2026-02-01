@@ -2,9 +2,12 @@ using BulkyBook.DataAccesss.Data;
 using BulkyBook.DataAccesss.DbInitializer;
 using BulkyBook.DataAccesss.Repository;
 using BulkyBook.DataAccesss.Repository.IRepository;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using BulkyBook.Models.Entities;
+using BulkyBook.Utility;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 namespace BulkyBook.Web
 {
@@ -20,10 +23,16 @@ namespace BulkyBook.Web
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection(nameof(StripeSettings)));
+            builder.Services.Configure<BrevoSettings>(
+                builder.Configuration.GetSection("BrevoSettings"));
+
+            builder.Services.AddScoped<IEmailSender, BrevoEmailSender>();
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<HttpClient>();
             builder.Services.AddRazorPages();
 
             builder.Services.AddScoped<IDbInitializer, DbInitializer>();
@@ -34,7 +43,19 @@ namespace BulkyBook.Web
                 options.LogoutPath = $"/Identity/Account/Logout";
                 options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
             });
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(100);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
 
+            builder.Services.AddAuthentication().AddFacebook(options =>
+            {
+                options.AppId = "3202745713238434";
+                options.AppSecret = "337b93d7db874a3accc104ba46ce1826";
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -54,7 +75,8 @@ namespace BulkyBook.Web
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseSession();
+            StripeConfiguration.ApiKey = builder.Configuration.GetSection("StripeSettings:SecretKey").Get<string>();
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",

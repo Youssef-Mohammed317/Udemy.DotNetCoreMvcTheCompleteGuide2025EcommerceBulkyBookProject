@@ -20,8 +20,6 @@ namespace BulkyBook.DataAccesss.DbInitializer
         }
         public void Initialize()
         {
-            _context.Database.EnsureCreated();
-
             if (_context.Database.GetPendingMigrations().Any())
             {
                 _context.Database.Migrate();

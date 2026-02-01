@@ -26,7 +26,7 @@ namespace BulkyBook.DataAccesss.Repository
             _dbSet.Add(entity);
         }
 
-        public T Get(Expression<Func<T, bool>> filter, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null!)
+        public T Get(Expression<Func<T, bool>> filter = null!, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null!, bool tracked = false)
         {
             IQueryable<T> query = _dbSet;
 
@@ -34,10 +34,21 @@ namespace BulkyBook.DataAccesss.Repository
             {
                 query = include(query);
             }
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if (!tracked)
+            {
+                query = query.AsNoTracking();
+            }
+
             return query.FirstOrDefault(filter)!;
         }
 
-        public IEnumerable<T> GetAll(Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null!)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null!)
         {
             IQueryable<T> query = _dbSet;
 
@@ -46,7 +57,12 @@ namespace BulkyBook.DataAccesss.Repository
                 query = include(query);
             }
 
-            return query.ToList();
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            return query.AsNoTracking().ToList();
         }
 
         public void Remove(T entity)
