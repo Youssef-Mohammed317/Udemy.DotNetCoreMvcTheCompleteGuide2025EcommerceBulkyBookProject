@@ -1,10 +1,12 @@
-Udemy 5 th Prject
-
-# 📦 Bulky Project
+# 📦 Bulky Project (Udemy 5th Project)
 
 An **ASP.NET Core MVC (Razor Views)** application built to practice real-world MVC patterns and commonly used web features in production systems.
 
 > ⚠️ This project uses **Razor Views (MVC)** — **not Blazor Server** and **not WebAssembly**.
+
+🎓 **Udemy Course:** https://www.udemy.com/course/complete-aspnet-core-21-course/  
+📜 **Certificate:** https://drive.google.com/file/d/1AvNL8t0cKJdo7MDJPV2DlrZAxFdVpXzJ/view?usp=drive_link  
+🎥 **Project Walkthrough Video:** https://drive.google.com/file/d/1ep8fsAx7u8TQtSADNG51c28q0GP611kr/view?usp=drive_link  
 
 ---
 
